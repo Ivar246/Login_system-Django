@@ -6,6 +6,7 @@ from django.contrib import messages
 
 from django.contrib.auth import authenticate, login
 # Create your views here.
+
 def home(request):
     return render(request, "authentication/index.html")
 
@@ -14,25 +15,20 @@ def signup(request):
    
    if request.method == "POST":
        user = User.objects.all()
-   
        username = request.POST['username']
        f_name = request.POST['f_name']
        l_name = request.POST['l_name']
        email = request.POST['email']
        password = request.POST['password']
        c_password = request.POST['c_password']
-
        if password == c_password:
             if user.filter(email=email).exists():
                 messages.info(request, 'email already taken')
                 return redirect('signup')
             elif user.filter(username=username).exists():
-                
                 messages.info(request, 'username already exist')
                 return redirect('signup')
-            
             else:
-                
                 myuser = User.objects.create_user(username, email, password)
                 myuser.first_name = f_name 
                 myuser.last_name = l_name
