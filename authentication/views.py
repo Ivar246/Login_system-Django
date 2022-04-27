@@ -1,4 +1,5 @@
 from contextlib import redirect_stderr
+from email import message
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
@@ -46,20 +47,41 @@ def signin(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
+        user = User.objects.all().values()
+        error = False
+        for i in user:
+            if i['username'] == username:
+                if i['password'] == password:
+                    messages.info(request, 'login successfully')
+                    return redirect("success")
+                else:
+                    error = True
+                    messages.error(request, "password doesn't match")
+                    return redirect('signin', error=True)
+            else:        
+                error = True
+                messages.info(request, 'username not found')
+                return redirect('signin')
+  
         
-        user = authenticate(username=username, password=password)
         
-        if user is not None:
-            login(request, user)
-            f_name = user.first_name
-            return render(request, 'authentication/index.html', {'f_name': f_name})
+    #     user = authenticate(username=username, password=password)
+        
+    #     if user is not None:
+    #         login(request, user)
+    #         f_name = user.first_name
+    #         return render(request, 'authentication/index.html', {'f_name': f_name})
             
-        else:
-            messages.error(request, 'Bad credentials')
-            return  redirect('home')
-        
-    return render(request, "authentication/signin.html")
+    #     else:
+    #         messages.error(request, 'Bad credentials')
+    #         return  redirect('home')
+    else:  
+        return render(request, "authentication/signin.html")
 
 
 def signout(request):
     pass
+
+
+def success(request):
+    return render(request, 'authentication/success.html')
