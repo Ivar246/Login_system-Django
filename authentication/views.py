@@ -1,3 +1,4 @@
+from contextlib import redirect_stderr
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
@@ -13,7 +14,6 @@ def signup(request):
    
    if request.method == "POST":
        user = User.objects.all()
-       print(user)
    
        username = request.POST['username']
        f_name = request.POST['f_name']
@@ -23,18 +23,27 @@ def signup(request):
        c_password = request.POST['c_password']
 
        if password == c_password:
-           
-            myuser = User.objects.create_user(username, email, password)
-            myuser.first_name = f_name 
-            myuser.last_name = l_name
-            myuser.save();
-            messages.success(request, "Your Account has been sucessfully created.")
-            return redirect('signin')
-
-        
-    
-
-   return render(request, "authentication/signup.html")
+            if user.filter(email=email).exists():
+                messages.info(request, 'email already taken')
+                return redirect('signup')
+            elif user.filter(username=username).exists():
+                
+                messages.info(request, 'username already exist')
+                return redirect('signup')
+            
+            else:
+                
+                myuser = User.objects.create_user(username, email, password)
+                myuser.first_name = f_name 
+                myuser.last_name = l_name
+                myuser.save();
+                messages.success(request, "Your Account has been sucessfully created.")
+                return redirect('signin')
+       else:
+                messages.info(request, "password doesn't match")
+                return redirect('signup')
+   else:
+         return render(request, "authentication/signup.html")
 
 
 def signin(request):
