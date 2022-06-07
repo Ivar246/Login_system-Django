@@ -5,23 +5,11 @@
     font-family: 'poppins', sans-serif;
 }
 
-header{
-    height: 80px;
-    background-color: rgb(94, 94, 185);
+.container{
+    height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: space-around;
-}
-
-header nav ul{
-    display: flex;
-    align-items: center;
-}
-
-header nav ul li{
-    list-style: none;
-    padding-left: 10px;
-    font-weight: 500;
+    flex-basis: 100em;
+    background-color: #f86629;
 }
 
 .btn{

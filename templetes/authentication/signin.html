@@ -9,6 +9,10 @@
 <body>
     <h3>Signin</h3>
 
+    {% for message in messages %}
+      <p>{{ message }}{{ username }}</p>
+    {% endfor %}
+    
     <form action="/signin" method="POST">
     {% csrf_token %}
         <label for="">Username</label>

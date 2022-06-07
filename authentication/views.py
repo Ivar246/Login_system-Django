@@ -1,11 +1,10 @@
-from contextlib import redirect_stderr
 from email import message
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 # Create your views here.
 
 def home(request):
@@ -48,39 +47,23 @@ def signin(request):
         username = request.POST['username']
         password = request.POST['password']
         user = User.objects.all().values()
-        error = False
-        for i in user:
-            if i['username'] == username:
-                if i['password'] == password:
-                    messages.info(request, 'login successfully')
-                    return redirect("success")
-                else:
-                    error = True
-                    messages.error(request, "password doesn't match")
-                    return redirect('signin', error=True)
-            else:        
-                error = True
-                messages.info(request, 'username not found')
-                return redirect('signin')
-  
+        print(user)
+        user = authenticate(username=username, password=password)
         
-        
-    #     user = authenticate(username=username, password=password)
-        
-    #     if user is not None:
-    #         login(request, user)
-    #         f_name = user.first_name
-    #         return render(request, 'authentication/index.html', {'f_name': f_name})
+        if user is not None:
+            login(request, user)
+            messages.info(request, 'logged in successfully')
+            return redirect('home')
             
-    #     else:
-    #         messages.error(request, 'Bad credentials')
-    #         return  redirect('home')
+        else:
+            messages.info(request, 'Bad credentials')
+            return  redirect('signin')
     else:  
         return render(request, "authentication/signin.html")
 
 
 def signout(request):
-    pass
+    logout(request)
 
 
 def success(request):
